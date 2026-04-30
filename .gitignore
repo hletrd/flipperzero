@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts (in case any leak out of submodules)
+build/
+dist/
+*.elf
+*.dfu
+*.bin
+*.tgz
+*.zip
+__pycache__/
+*.pyc
+
+# Local OMC state (not for sharing)
+.omc/
+
+# ufbt cache
+.ufbt/

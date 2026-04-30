@@ -1,0 +1,45 @@
+[submodule "forks/upstream-firmware"]
+	path = forks/upstream-firmware
+	url = https://github.com/flipperdevices/flipperzero-firmware.git
+[submodule "forks/unleashed"]
+	path = forks/unleashed
+	url = https://github.com/DarkFlippers/unleashed-firmware.git
+[submodule "forks/momentum"]
+	path = forks/momentum
+	url = https://github.com/Next-Flip/Momentum-Firmware.git
+[submodule "forks/momentum-apps"]
+	path = forks/momentum-apps
+	url = https://github.com/Next-Flip/Momentum-Apps.git
+[submodule "forks/roguemaster"]
+	path = forks/roguemaster
+	url = https://github.com/RogueMaster/flipperzero-firmware-wPlugins.git
+[submodule "forks/syberxspace-firmware"]
+	path = forks/syberxspace-firmware
+	url = https://github.com/SyberxSpace/flipperzero-firmware-wPlugins-noG.git
+[submodule "forks/evilcrowrf"]
+	path = forks/evilcrowrf
+	url = https://github.com/h-RAT/EvilCrowRF_Custom_Firmware_CC1101_FlipperZero.git
+[submodule "forks/awesome-flipperzero"]
+	path = forks/awesome-flipperzero
+	url = https://github.com/djsime1/awesome-flipperzero.git
+[submodule "forks/uberguidoz-flipper"]
+	path = forks/uberguidoz-flipper
+	url = https://github.com/UberGuidoZ/Flipper.git
+[submodule "forks/flipper-irdb"]
+	path = forks/flipper-irdb
+	url = https://github.com/logickworkshop/Flipper-IRDB.git
+[submodule "forks/flipperzero-goodies"]
+	path = forks/flipperzero-goodies
+	url = https://github.com/wetox-team/flipperzero-goodies.git
+[submodule "forks/flipper-starnew"]
+	path = forks/flipper-starnew
+	url = https://github.com/glutesha/Flipper-Starnew.git
+[submodule "apps/ble-spam"]
+	path = apps/ble-spam
+	url = https://github.com/noproto/ble_spam_ofw.git
+[submodule "apps/bruteforce"]
+	path = apps/bruteforce
+	url = https://github.com/tobiabocchi/flipperzero-bruteforce.git
+[submodule "apps/tpms"]
+	path = apps/tpms
+	url = https://github.com/wosk/flipperzero-tpms.git
