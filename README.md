@@ -59,24 +59,36 @@ This is **personal research material**, not a product. It targets:
 ## Quick start
 
 ```bash
-# Clone with all submodules
-git clone --recursive https://github.com/hletrd/flipperzero.git
+git clone https://github.com/hletrd/flipperzero.git
 cd flipperzero
 
-# Build & flash Momentum (the recommended firmware)
-cd forks/momentum
-./fbt FORCE=1 flash_usb_full
-
-# Or build from upstream (stock OFW)
-cd forks/upstream-firmware
-./fbt FORCE=1 flash_usb_full
+make help                # see all targets
+make submodules          # init/pull all submodules
+make flash-momentum      # build + flash Momentum (recommended)
+make sd-deploy           # initialize SD card with apps + DBs
+make flipper-status      # detect connected device
 ```
 
-If you only want one firmware, do a partial submodule init:
+For a partial submodule clone (only what you need):
 
 ```bash
-git submodule update --init forks/momentum
+git submodule update --init forks/momentum forks/momentum-apps
 ```
+
+## Scripts & Makefile
+
+| Target | Purpose |
+|---|---|
+| `make submodules` | init + pull all 15 submodules |
+| `make flash-momentum` | build + flash Momentum firmware |
+| `make flash-stock` | build + flash stock OFW |
+| `make build-apps` | build custom apps in `apps/` against Momentum SDK |
+| `make sd-deploy` | one-shot SD card init (Momentum DBs + UberGuidoZ + IRDB + bruteforce + keys) |
+| `make sd-clean` | strip macOS metadata (AppleDouble, .DS_Store, Spotlight) |
+| `make sd-backup` | back up user captures from SD to `~/flipperzero-sd-backup/<timestamp>/` |
+| `make flipper-status` | detect Flipper / DFU presence |
+
+Override SD path: `make sd-deploy SD="/Volumes/My Card"`
 
 ## Documentation
 

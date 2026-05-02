@@ -1,0 +1,65 @@
+name: Lint & Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint-markdown:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false  # don't clone the heavy submodules
+
+      - name: Run markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v17
+        with:
+          globs: |
+            README.md
+            CLAUDE.md
+            docs/**/*.md
+          config: |
+            {
+              "default": true,
+              "MD013": false,
+              "MD033": false,
+              "MD041": false,
+              "MD024": false
+            }
+
+  validate-submodules:
+    name: Submodule URLs reachable
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Check each submodule URL
+        run: |
+          set -e
+          fail=0
+          while IFS= read -r url; do
+            if curl -sfL -o /dev/null -w '%{http_code}' "$url" | grep -qE '^(200|301|302)$'; then
+              echo "ok   $url"
+            else
+              echo "FAIL $url"
+              fail=1
+            fi
+          done < <(grep -E '^\s*url\s*=' .gitmodules | awk -F'=' '{print $2}' | xargs -n1 echo)
+          exit $fail
+
+  validate-shell:
+    name: Shell scripts pass shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run shellcheck
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          find scripts -name '*.sh' -exec shellcheck -e SC2086,SC2155 {} +

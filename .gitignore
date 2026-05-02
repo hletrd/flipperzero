@@ -27,3 +27,9 @@ __pycache__/
 
 # ufbt cache
 .ufbt/
+
+# Personal captures — credentials, don't publish
+captures/*/*
+!captures/*/.gitkeep
+!captures/README.md
+
