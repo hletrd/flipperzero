@@ -34,9 +34,6 @@
 [submodule "forks/flipper-starnew"]
 	path = forks/flipper-starnew
 	url = https://github.com/glutesha/Flipper-Starnew.git
-[submodule "apps/ble-spam"]
-	path = apps/ble-spam
-	url = https://github.com/noproto/ble_spam_ofw.git
 [submodule "apps/bruteforce"]
 	path = apps/bruteforce
 	url = https://github.com/tobiabocchi/flipperzero-bruteforce.git

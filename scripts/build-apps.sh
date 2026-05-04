@@ -1,9 +1,19 @@
 #!/usr/bin/env bash
-# build-apps.sh — rebuild all custom apps in apps/ against the current ufbt SDK
+# build-apps.sh — rebuild custom apps against the current ufbt SDK
 #
-# Usage: ./scripts/build-apps.sh [--target=stock|momentum]
+# Usage: ./scripts/build-apps.sh [stock|momentum|unleashed]
 #
-# Default target: momentum (tracks the firmware that's currently flashed)
+# Default target: momentum.
+#
+# Build strategy per target:
+#   - momentum:  prefer forks/momentum-apps/<name>/ if present (curated v6.6+),
+#                fall back to apps/<name>/ otherwise
+#   - stock:     always build from apps/<name>/ (against stock SDK)
+#   - unleashed: always build from apps/<name>/ (against unleashed SDK)
+#
+# Why the override: forks/momentum-apps/ holds versions specifically tuned for
+# Momentum's BLE/SubGHz/NFC stacks. The stand-alone apps/ submodules track
+# upstream "works on stock" sources and can be older or use removed APIs.
 
 set -euo pipefail
 
@@ -20,15 +30,9 @@ if [[ ! -x "$UFBT" ]]; then
 fi
 
 case "$TARGET" in
-  momentum)
-    INDEX_URL="https://up.momentum-fw.dev/firmware/directory.json"
-    ;;
-  stock)
-    INDEX_URL="https://update.flipperzero.one/firmware/directory.json"
-    ;;
-  unleashed)
-    INDEX_URL="https://up.unleashedflip.com/directory.json"
-    ;;
+  momentum)   INDEX_URL="https://up.momentum-fw.dev/firmware/directory.json" ;;
+  stock)      INDEX_URL="https://update.flipperzero.one/firmware/directory.json" ;;
+  unleashed)  INDEX_URL="https://up.unleashedflip.com/directory.json" ;;
   *)
     echo "error: unknown target: $TARGET (must be stock|momentum|unleashed)" >&2
     exit 1
@@ -41,19 +45,45 @@ echo "ufbt: switching SDK to $TARGET..."
 OUT_DIR="$REPO/build/apps-$TARGET"
 mkdir -p "$OUT_DIR"
 
-for app_dir in "$REPO/apps"/*/; do
-  app="$(basename "$app_dir")"
-  if [[ ! -f "$app_dir/application.fam" ]]; then
-    echo "skip $app (no application.fam — not a single-app source dir)"
+# Resolve the source directory for a given app name.
+# When TARGET=momentum, prefer forks/momentum-apps/<name>/ if present.
+resolve_source() {
+  local name="$1"
+  if [[ "$TARGET" == "momentum" ]] \
+     && [[ -f "$REPO/forks/momentum-apps/$name/application.fam" ]]; then
+    echo "$REPO/forks/momentum-apps/$name"
+  elif [[ -f "$REPO/apps/$name/application.fam" ]]; then
+    echo "$REPO/apps/$name"
+  else
+    echo ""
+  fi
+}
+
+# Apps to build: union of apps/ submodules + any explicitly named ones.
+APPS=()
+for d in "$REPO/apps"/*/; do
+  [[ -f "${d}application.fam" ]] && APPS+=("$(basename "$d")")
+done
+
+# Always include ble_spam from momentum-apps (no apps/ble-spam submodule anymore)
+if [[ "$TARGET" == "momentum" ]] && [[ -f "$REPO/forks/momentum-apps/ble_spam/application.fam" ]]; then
+  APPS+=("ble_spam")
+fi
+
+for app in "${APPS[@]}"; do
+  src="$(resolve_source "$app")"
+  if [[ -z "$src" ]]; then
+    echo "skip $app (no source for target $TARGET)"
     continue
   fi
 
   echo
-  echo "=== building $app for $TARGET ==="
-  ( cd "$app_dir" && "$UFBT" build )
+  echo "=== building $app from $(basename "$(dirname "$src")")/$(basename "$src") for $TARGET ==="
+  ( cd "$src" && "$UFBT" build )
 
-  # Find the produced .fap (ufbt always writes to ~/.ufbt/build/)
-  FAP=$(find "$HOME/.ufbt/build" -maxdepth 1 -name "*.fap" -mmin -2 | head -1)
+  # ufbt writes to ~/.ufbt/build/<appid>.fap — find by recent mtime
+  FAP=$(find "$HOME/.ufbt/build" -maxdepth 1 -name "*.fap" -mmin -2 -print0 \
+        | xargs -0 ls -t 2>/dev/null | head -1)
   if [[ -n "$FAP" ]]; then
     cp "$FAP" "$OUT_DIR/$(basename "$FAP")"
     echo "  → $OUT_DIR/$(basename "$FAP")"

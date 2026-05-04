@@ -63,7 +63,17 @@ Applications/
 3. **Output**: `~/.ufbt/build/<appid>.fap`
 4. **Deploy**: copy to `/Volumes/Flipper SD/apps/<Category>/`
 
-The `apps/tpms/` and `apps/ble-spam/` submodules in this repo are examples of apps built from source against Momentum SDK. Both produced working `.fap` files for Momentum.
+Or `make build-apps` to do all of the above for every app in `apps/` (and `forks/momentum-apps/ble_spam/` when target=momentum).
+
+## When sources differ between `apps/<name>/` and `forks/momentum-apps/<name>/`
+
+For Momentum, **prefer `forks/momentum-apps/`**. That repo is maintained by the Next-Flip team specifically for Momentum's API, BLE stack quirks, and Sub-GHz protocol decoders. Standalone repos like `noproto/ble_spam_ofw` (the `_ofw` suffix means "Original Firmware") track stock OFW and may use slightly different APIs that work-but-not-quite on Momentum.
+
+Concrete example: `noproto/ble_spam_ofw` v4.2 produces a `.fap` that loads on Momentum but **null-pointer-deref crashes on launch** because Momentum's BLE handle init differs from stock. The Momentum-Apps `ble_spam/` v6.6 is the same upstream patched for Momentum — works cleanly.
+
+`scripts/build-apps.sh momentum` automatically prefers `forks/momentum-apps/<name>/` when present and falls back to `apps/<name>/` otherwise. For `stock` and `unleashed` targets, it always uses `apps/<name>/`.
+
+Historical: this repo originally tracked `apps/ble-spam` as a submodule of `noproto/ble_spam_ofw`. After the v4.2 vs v6.6 mismatch caused a crash, the submodule was removed and we now build BLE Spam exclusively from `forks/momentum-apps/ble_spam/`.
 
 ## What if I really want an old `.fap` to run
 
