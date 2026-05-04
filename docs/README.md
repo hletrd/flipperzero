@@ -17,6 +17,9 @@ Hierarchical reference for everything in this repo.
 - [ibutton.md](research/ibutton.md) — 1-Wire (Dallas, Cyfral, Metakom)
 - [badusb.md](research/badusb.md) — DuckyScript, HID emulation
 - [bluetooth.md](research/bluetooth.md) — BLE advertisements, LE Audio, BLE Spam
+- [tpms.md](research/tpms.md) — tire pressure sensor protocols (Schrader, Renault, Toyota, etc.)
+- [u2f.md](research/u2f.md) — Flipper as a U2F security key
+- [sdr.md](research/sdr.md) — RTL-SDR / HackRF integration with Flipper workflow
 
 ### [Cars](cars/)
 - [smart-keys.md](cars/smart-keys.md) — RKE / PKES / immobilizer architecture
@@ -31,6 +34,7 @@ Hierarchical reference for everything in this repo.
 ### [Hardware](hardware/)
 - [flipper-zero.md](hardware/flipper-zero.md) — STM32WB55, CC1101, ST25R3916, RFM69-style LF
 - [proxmark3.md](hardware/proxmark3.md) — Proxmark3 RDV4 — when to reach for it instead
+- [gpio-addons.md](hardware/gpio-addons.md) — WiFi DevBoard, NRF24, GPS, external CC1101, GPIO sensors
 
 ### [Apps](apps/)
 - [api-compatibility.md](apps/api-compatibility.md) — `.fap` ABI lock-in, Momentum vs stock vs UL/RM
